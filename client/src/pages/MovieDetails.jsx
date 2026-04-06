@@ -59,7 +59,7 @@ const MovieDetails = () => {
       <div className='flex items-center gap-4 w-max px-4'>
         {show.movie.casts.slice(0,12).map((cast, index)=> (
           <div key={index} className='flex flex-col items-center text-center'>
-            <img src={cast.profile_path} alt={cast.name} className=' h-20 rounded-full '/>
+            <img src={cast.profile_path} alt="" className=' h-20 rounded-full md:h-20 aspect-square object-cover '/>
             <p className='mt-3 text-xs font-medium'>{cast.name}</p>
           </div>
         ))}
