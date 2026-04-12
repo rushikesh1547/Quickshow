@@ -25,7 +25,7 @@ const AdminSidebar = () => {
         <p className='mt-2 text-base max-md:hidden'>{user.firstName} {user.lastName}</p>
         <div>
             {adminNavLinks.map((link, index)=> (
-                <NavLink key={index} to={link.path} className={({isActive})=> `relative flex items-center gap-2 mac-md:justify-center w-full py-2.5 min-md:pl-10 first:mt-6 text-gray-400 ${isActive && "bg-primary/15 text-primary group"}`}>
+                <NavLink key={index} end to={link.path} className={({isActive})=> `relative flex items-center gap-2 mac-md:justify-center w-full py-2.5 min-md:pl-10 first:mt-6 text-gray-400 ${isActive && "bg-primary/15 text-primary group"}`}>
                    {({isActive})=>(
                     <>
                     <link.icon className='h-5 w-5' />
