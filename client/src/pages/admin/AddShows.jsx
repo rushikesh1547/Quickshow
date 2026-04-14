@@ -3,6 +3,7 @@ import Title from '../../components/admin/Title'
 import Loading from '../../components/Loading'
 import { dummyShowsData } from '../../assets/assets'
 import { StarIcon } from 'lucide-react'
+import { kConverter } from '../../lib/kConverter'
 
 const addShows = () => {
 
@@ -36,7 +37,7 @@ const addShows = () => {
                     <StarIcon className='w-4 h-4 text-primary fill-primary'/>
                     {movie.vote_average.toFixed(1)}
                   </p>
-                  <p>{movie.vote_count} Votes</p>
+                  <p>{kConverter(movie.vote_count)} Votes</p>
                 </div>
               </div>
         </div>
