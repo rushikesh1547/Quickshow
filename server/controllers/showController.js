@@ -1,5 +1,5 @@
 import axios from 'axios';
-import Movie from '../models/Moviejs';
+import Movie from '../models/Movie.js';
 import Show from '../models/Show.js';
 
 export const getNowPlayingMovies = async (req, res) => {
@@ -51,8 +51,8 @@ export const addShow = async (req, res) => {
                 overview: movieApiData.overview,
                 poster_path: movieApiData.poster_path,
                 backdrop_path: movieApiData.backdrop_path,
-                genres: movieApiData.genres,
-                casts: movieCreditsData.cast,
+                genres: movieApiData.genres.map(g=> g.name),
+                casts: movieCreditsData.cast.map(c=> c.name),
                 release_date: movieApiData.release_date,
                 original_language: movieApiData.original_language,
                 tagline: movieApiData.tagline || '',
