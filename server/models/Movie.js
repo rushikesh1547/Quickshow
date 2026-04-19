@@ -5,7 +5,7 @@ const movieSchema = new mongoose.Schema(
     _id: {
         type: String,    
         required: true,      
-    },                    
+    }, 
     title: {
         type: String,
         required: true,          
@@ -33,19 +33,19 @@ const movieSchema = new mongoose.Schema(
         type: String,
     },
     genres: {
-        type: [String],
+        type: Array,
         required: true,
     },
     casts: {
-        type: [String],
+        type: Array,
         required: true,
     },
     vote_average: {
-        type: [String],
+        type: Number,
         required: true,
     },
     runtime: {
-        type: [String],
+        type: Number,
         required: true,
     },
 }, {timestamps: true}

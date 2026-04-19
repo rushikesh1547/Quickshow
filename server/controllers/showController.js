@@ -32,7 +32,7 @@ export const addShow = async (req, res) => {
             const [movieDetailsResponse, movieCreditsResponse] = await Promise.all([
                 axios.get(`https://api.themoviedb.org/3/movie/${movieId}` ,
                  {   headers: {
-                Authorization: `Bearer ${process.env.TMDB_API_KEY}`,
+                Authorization: `Bearer ${process.env.TMDB_API_KEY}`
             }
             }),
             axios.get(`https://api.themoviedb.org/3/movie/${movieId}/credits` ,
@@ -51,11 +51,11 @@ export const addShow = async (req, res) => {
                 overview: movieApiData.overview,
                 poster_path: movieApiData.poster_path,
                 backdrop_path: movieApiData.backdrop_path,
-                genres: movieApiData.genres.map(g=> g.name),
-                casts: movieCreditsData.cast.map(c=> c.name),
+                genres: movieApiData.genres,
+                casts: movieCreditsData.cast,
                 release_date: movieApiData.release_date,
                 original_language: movieApiData.original_language,
-                tagline: movieApiData.tagline || '',
+                tagline: movieApiData.tagline || "",
                 vote_average: movieApiData.vote_average,
                 runtime: movieApiData.runtime
             }
@@ -104,7 +104,7 @@ export const getShows = async (req, res) => {
         res.json({success: true, shows: Array.from(uniqueShows)})
     } catch (error) {
         console.log(error);
-        res.status(500).json({success: false, message: error.message})
+        res.json({success: false, message: error.message})
     } 
 }
 
@@ -125,9 +125,10 @@ export const getShow = async (req, res) => {
             }
             dateTime[date].push({time: show.showDateTime, showId: show._id});
             
-            res.json({success: true, movie, dateTime})
 
         });
+                    res.json({success: true, movie, dateTime})
+
     } catch (error) {
         console.log(error);
         res.status(500).json({success: false, message: error.message})
