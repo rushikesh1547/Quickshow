@@ -1,11 +1,10 @@
 import { clerkClient } from "@clerk/express";
-import Booking from "../models/Booking";
-import Movie from "../models/Movie";
-import Show from "../models/Show";
-import User from "../models/User";
+import Booking from "../models/Booking.js";
+import Movie from "../models/Movie.js";
+import Show from "../models/Show.js";
+import User from "../models/User.js";
 import mongoose from "mongoose";
 import { ObjectId } from "mongodb";
-import { getUserId } from "@clerk/express/server";
 
 //API controller Function to get user bookings
 export const getUserBookings = async (req, res) => {

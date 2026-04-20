@@ -1,4 +1,4 @@
-import Show from "../models/Show";
+import Show from "../models/Show.js";
 
 
 //Function to check availability of selected seats for a movie
