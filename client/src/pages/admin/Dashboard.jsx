@@ -7,9 +7,14 @@ import Loading from '../../components/Loading';
 import Title from '../../components/admin/Title';
 import BlurCircle from '../../components/BlurCircle';
 import { dateFormat } from '../../lib/dateFormat';
+import { useAppContext } from '../../context/AppContext';
+import toast from 'react-hot-toast';
 
 
 const Dashboard = () => {
+
+    const {axios, getToken, user, image_base_url} = useAppContext()
+  
 
   const currency = import.meta.env.VITE_CURRENCY 
 
@@ -30,12 +35,29 @@ const Dashboard = () => {
   ]
 
   const fetchDashboardData = async () => {
-    setDashboardData(dummyDashboardData)
-    setLoading(false)
+   try {
+    const {data} = await axios.get('/api/admin/dashboard', {
+        headers: {
+            Authorization: `Bearer ${await getToken()}`
+        }
+    })
+    if(data.success){
+        setDashboardData(data.dashboardData)
+        setLoading(false)
+    }else{
+      toast.error(data.message)
+    }
+   } 
+   catch (error) {
+    toast.error("Error fetching dashboard data", error)
+   }
   };
 
   useEffect(() => {
-    fetchDashboardData();
+    if(user){
+          fetchDashboardData();
+
+    }
   }, []);
 
 
@@ -63,14 +85,14 @@ const Dashboard = () => {
         <BlurCircle top="100px" left="-10%"/>
         {dashboardData.activeShows.map((show) => (
           <div key={show._id} className='w-55 rounded-lg overflow-hidden h-full pb-3 bg-primary/10 border border-primary/20 hover:-translate-y-1 transition-y-1 transition duration-300'>
-            <img src={show.movie.poster_path} alt="" className='h-60 w-full object-cover'/>
+            <img src={ image_base_url + show.movie.poster_path} alt="" className='h-60 w-full object-cover'/>
             <p className='font-medium p-2 truncate'>{show.movie.title}</p>
 
             <div className='flex items-center justify-between px-2'>
               <p className='font-medium text-lg'>{currency}{show.showPrice}</p>
               <p className='flex items-center gap-1 text-sm text-gray-400 mt-1 pr-1'>
                 <StarIcon className='w-4 h-4 text-primary fill-primary'/>
-                {show.movie.vote_average.toFixed(1)}
+                {Number(show.movie?.vote_average ?? 0).toFixed(1)}
               </p>
             </div>
             <p className='text-sm px-2 pt-2 text-gray-500'>{dateFormat(show.showDateTime)}</p>
