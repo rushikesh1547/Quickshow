@@ -27,7 +27,6 @@ const ListShows = () => {
       setLoading(false);
     } catch (error) {
       console.error(error)
-      setLoading(false);
     }
   }
 
@@ -50,7 +49,7 @@ if(user){
             </tr>
           </thead>
           <tbody className='text-sm font-light'>
-            {(shows || []).map((show, index) => (
+            {shows.map((show, index) => (
               <tr key={index} className='border-b border-primary/10 bg-primary/5 even:bg-primary/10'>
                 <td className='p-2 pl-5 min-w-45'>{show.movie.title}</td>
                 <td className='p-2'>{dateFormat(show.showDateTime)}</td>
