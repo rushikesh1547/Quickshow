@@ -2,6 +2,29 @@ import axios from 'axios';
 import Movie from '../models/Movie.js';
 import Show from '../models/Show.js';
 
+const RETRYABLE_NETWORK_CODES = new Set(['ECONNRESET', 'ECONNABORTED', 'ETIMEDOUT', 'ENOTFOUND', 'EAI_AGAIN']);
+
+const isRetryableNetworkError = (error) => {
+    return Boolean(error?.code && RETRYABLE_NETWORK_CODES.has(error.code));
+};
+
+const fetchTmdbWithRetry = async (url, config, retries = 2) => {
+    let lastError;
+
+    for (let attempt = 0; attempt <= retries; attempt += 1) {
+        try {
+            return await axios.get(url, { timeout: 10000, ...config });
+        } catch (error) {
+            lastError = error;
+            if (!isRetryableNetworkError(error) || attempt === retries) {
+                throw error;
+            }
+        }
+    }
+
+    throw lastError;
+};
+
 export const getNowPlayingMovies = async (req, res) => {
     try {
         const { data } =  await axios.get('https://api.themoviedb.org/3/movie/now_playing', {
@@ -22,20 +45,29 @@ export const getNowPlayingMovies = async (req, res) => {
 
 export const addShow = async (req, res) => {
     try {
-        const {movieId, showsInput, showPrice} = req.body;
+        const { movieId, showPrice } = req.body;
+        const showsInput = req.body.showsInput || req.body.showInput;
+
+        if (!movieId || !Array.isArray(showsInput) || showsInput.length === 0 || Number(showPrice) <= 0) {
+            return res.status(400).json({ success: false, message: 'Invalid show payload' });
+        }
 
         let movie = await Movie.findById(movieId);
 
         if(!movie){
             //Fetch movie details and credits from TMDB API
 
+            if (!process.env.TMDB_API_KEY) {
+                return res.status(500).json({ success: false, message: 'TMDB API key is missing on server' });
+            }
+
             const [movieDetailsResponse, movieCreditsResponse] = await Promise.all([
-                axios.get(`https://api.themoviedb.org/3/movie/${movieId}` ,
+                fetchTmdbWithRetry(`https://api.themoviedb.org/3/movie/${movieId}` ,
                  {   headers: {
                 Authorization: `Bearer ${process.env.TMDB_API_KEY}`
             }
             }),
-            axios.get(`https://api.themoviedb.org/3/movie/${movieId}/credits` ,
+            fetchTmdbWithRetry(`https://api.themoviedb.org/3/movie/${movieId}/credits` ,
                 {   headers: {
                 Authorization: `Bearer ${process.env.TMDB_API_KEY}`
         }
@@ -68,16 +100,21 @@ export const addShow = async (req, res) => {
 
         showsInput.forEach(show => {
             const showDate = show.date;
-            show.time.forEach((time) => {
+            const times = Array.isArray(show.time) ? show.time : [];
+            times.forEach((time) => {
                 const dateTimeString = `${showDate}T${time}`;
                 showsToCreate.push({
                     movie: movieId,
                     showDateTime: new Date(dateTimeString),
-                    showPrice,
+                    showPrice: Number(showPrice),
                     occupiedSeats: {}
                 })
             })
         });
+
+        if (showsToCreate.length === 0) {
+            return res.status(400).json({ success: false, message: 'No valid show times provided' });
+        }
 
         if(showsToCreate.length > 0){
             await Show.insertMany(showsToCreate);
@@ -87,6 +124,10 @@ export const addShow = async (req, res) => {
 
     } catch (error) {
         console.log(error);
+        if (isRetryableNetworkError(error)) {
+            return res.status(502).json({ success: false, message: 'Unable to reach TMDB right now. Please try again.' });
+        }
+
         res.status(500).json({success: false, message: error.message})
     }
 }

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import Title from '../../components/admin/Title'
 import Loading from '../../components/Loading'
-import { dummyShowsData } from '../../assets/assets'
 import { CheckIcon, DeleteIcon, StarIcon } from 'lucide-react'
 import { kConverter } from '../../lib/kConverter'
 import { useAppContext } from '../../context/AppContext'
+import toast from 'react-hot-toast'
 
 const AddShows = () => {
 
@@ -13,9 +13,10 @@ const AddShows = () => {
   const currency = import.meta.env.VITE_CURRENCY
   const [nowPlayingMovies, setNowPlayingMovies] = useState([])
   const [selectedMovie, setSelectedMovie] = useState(null)
-  const [dateTimeSelection, setdateTimeSelection] = useState({})
+  const [dateTimeSelection, setDateTimeSelection] = useState({})
   const [dateTimeInput, setDateTimeInput] = useState('')
   const [showPrice, setShowPrice] = useState('')
+  const [addingShow, setAddingShow] = useState(false)
 
   const fetchNowPLayingMovies = async () => {
     try {
@@ -40,7 +41,7 @@ const AddShows = () => {
     const [date, time] = dateTimeInput.split('T');
     if(!date || !time) return;
 
-    setdateTimeSelection((prev) => {
+    setDateTimeSelection((prev) => {
       const times = prev[date] || [];
       if(!times.includes(time)) {
         return {...prev, [date]: [...times, time]};
@@ -50,7 +51,7 @@ const AddShows = () => {
   };
 
   const handleRemoveTime = (date, time) => {
-    setdateTimeSelection((prev) => {
+    setDateTimeSelection((prev) => {
       const filteredTimes = prev[date].filter((t) => t !== time);
       if(filteredTimes.length === 0) {
         const { [date]: _, ...rest } = prev;
@@ -62,9 +63,52 @@ const AddShows = () => {
     });
   };
 
+  const handleSubmit = async () => {
+    try {
+      if(!selectedMovie || Object.keys(dateTimeSelection).length === 0 || !showPrice){
+        return toast('Missing required fields')
+      }
+
+      setAddingShow(true);
+
+      const showsInput = Object.entries(dateTimeSelection).map(([date, time]) => ({date, time}))
+
+      const payload = {
+        movieId: selectedMovie,
+        showsInput,
+        showPrice: Number(showPrice)
+
+      }
+
+      const {data} = await axios.post('/api/show/add', payload, {
+        headers: {
+          Authorization: `Bearer ${await getToken()}`
+        }
+      })
+
+      if(data.success){
+        toast.success(data.message)
+        setSelectedMovie(null)
+        setDateTimeSelection({})
+        setShowPrice('')
+      }else{
+        toast.error(data.message)
+      }
+
+    } catch (error) {
+      console.error('Error adding show:', error)
+      toast.error('Failed to add show. Please try again.')
+    } finally {
+      setAddingShow(false);
+    }
+  }
+
   useEffect(() => {
+    if(user){
     fetchNowPLayingMovies()
-  }, [])
+
+    }
+  }, [user])
 
   return nowPlayingMovies.length > 0 ? (
     <>
@@ -134,7 +178,7 @@ const AddShows = () => {
           </ul>
         </div>
       )}
-      <button className='bg-primary text-white px-8 mt-6 rounded hover:bg-primary/90 transition-all cursor-pointer'>
+      <button onClick={handleSubmit} disabled={addingShow} className='bg-primary text-white px-8 mt-6 rounded hover:bg-primary/90 transition-all cursor-pointer'>
         Add Show
       </button>
           
