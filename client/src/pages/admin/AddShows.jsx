@@ -123,7 +123,7 @@ const AddShows = () => {
                 <div className='text-sm flex items-center justify-between p-2 bg-black/70 w-full absolute bottom-0 left-0'>
                   <p className='flex items-center gap-1 text-gray-400 '>
                     <StarIcon className='w-4 h-4 text-primary fill-primary'/>
-                    {movie.vote_average.toFixed(1)}
+                    {Number(movie.vote_average ?? 0).toFixed(1)}
                   </p>
                   <p>{kConverter(movie.vote_count)} Votes</p>
                 </div>
