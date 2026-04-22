@@ -40,7 +40,7 @@ const SeatLayout = () => {
       return toast("You can only select 5 seats")
     }
     if(occupiedSeats.includes(seatId)){
-      return toast("Seat is already occupied")
+      return toast("Seat is already booked")
     }
     setSelectedSeats(prev => prev.includes(seatId) ? prev.filter(seat => seat !== seatId) : [...prev, seatId])
   }
@@ -53,7 +53,7 @@ const SeatLayout = () => {
           return (
             <button key={seatId} onClick={()=> handleSeatClick(seatId)} className={`w-8 h-8 rounded border border-primary/60 cursor-pointer 
              ${selectedSeats.includes(seatId) && "bg-primary text-white"} 
-             ${occupiedSeats.includes(seatId) && "opacity-50 "}`} disabled={occupiedSeats.includes(seatId)}>
+             ${occupiedSeats.includes(seatId) && "opacity-50 "}`}>
                {seatId} 
               </button> 
              );
