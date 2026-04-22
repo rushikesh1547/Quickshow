@@ -59,7 +59,7 @@ export const AppProvider = ({children}) => {
                 {Authorization: `Bearer ${await getToken()}`}
             })
             if(data.success){
-                setFavoriteMovies(data.movies)
+                setFavoriteMovies(data.favorites)
             }
             else {
                 toast.error(data.message)
