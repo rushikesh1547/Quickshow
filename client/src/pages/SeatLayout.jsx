@@ -93,9 +93,7 @@ const SeatLayout = () => {
           }
         })
         if(data.success){
-          toast.success(data.message)
-          navigate(`/my-bookings`)
-          scrollTo(0,0)
+          window.location.href = data.url;
         }
         else{
           toast.error(data.message)

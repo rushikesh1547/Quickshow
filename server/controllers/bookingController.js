@@ -1,6 +1,6 @@
 import Show from "../models/Show.js";
 import Booking from "../models/Booking.js";
-import stripe from 'stripe';
+import Stripe from 'stripe';
 
 //Function to check availability of selected seats for a movie
 const checkSeatsAvailability = async (showId, selectedSeats)=> {
@@ -53,7 +53,7 @@ export const createBooking = async (req, res) => {
         await showData.save();
 
         //Stripe Gateway Initialize
-        const stripeInstance = new stripe(process.env.STRIPE_SECRET_KEY);
+        const stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY);
         
         //Creating line items for stripe
         const line_items = [{
