@@ -136,11 +136,11 @@ const releaseSeatsAndDeleteBooking = inngest.createFunction(
                     </p>
 
                     <p style="margin:5px 0;">
-                    🎟️ <strong>Seats:</strong> ${booking.seats.join(", ")}
+                    🎟️ <strong>Seats:</strong> ${Array.isArray(booking.bookedSeats) ? booking.bookedSeats.join(", ") : "N/A"}
                     </p>
 
                     <p style="margin:5px 0;">
-                    💳 <strong>Amount Paid:</strong> ₹${booking.totalAmount}
+                    💳 <strong>Amount Paid:</strong> ₹${booking.amount ?? 0}
                     </p>
 
                 </div>
