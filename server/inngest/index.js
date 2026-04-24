@@ -2,6 +2,7 @@ import {Inngest, step} from 'inngest'
 import User from '../models/User.js';
 import Show from '../models/Show.js';
 import Booking from '../models/Booking.js';
+import sendEmail from '../configs/nodemailer.js';
 
 
 // Create a client to send and receive events
@@ -103,8 +104,71 @@ const releaseSeatsAndDeleteBooking = inngest.createFunction(
                     model: 'Movie'
                 }
             }).populate('user');
+
+            await sendEmail({
+                to: booking.user.email,
+                subject: `Payment Confirmation: "${booking.show.movie.title}" booked!`,
+           body: `
+                <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; padding: 10px;">
+
+                <h2 style="color:#e50914; margin-bottom: 5px;">
+                    🎬 Booking Confirmed!
+                </h2>
+
+                <p style="margin-top:0;">Hi <strong>${booking.user.name}</strong>,</p>
+
+                <p>
+                    Your tickets for 
+                    <strong style="color:#f84464;">${booking.show.movie.title}</strong> 
+                    are successfully booked! 🍿
+                </p>
+
+                <div style="background:#f9f9f9; padding:15px; border-radius:8px; margin:15px 0;">
+                    
+                    <p style="margin:5px 0;">
+                    📅 <strong>Date:</strong> 
+                    ${new Date(booking.show.showDateTime).toLocaleDateString('en-US', { timeZone: 'Asia/Kolkata' })}
+                    </p>
+
+                    <p style="margin:5px 0;">
+                    ⏰ <strong>Time:</strong> 
+                    ${new Date(booking.show.showDateTime).toLocaleTimeString('en-US', { timeZone: 'Asia/Kolkata' })}
+                    </p>
+
+                    <p style="margin:5px 0;">
+                    🎟️ <strong>Seats:</strong> ${booking.seats.join(", ")}
+                    </p>
+
+                    <p style="margin:5px 0;">
+                    💳 <strong>Amount Paid:</strong> ₹${booking.totalAmount}
+                    </p>
+
+                </div>
+
+                <p>
+                    🎉 Grab your popcorn and enjoy the show!
+                </p>
+
+                <p>
+                    If you have any questions or need assistance, feel free to reach out to us.
+                </p>
+
+                <p style="margin-top:20px;">
+                    Cheers,<br/>
+                    <strong>QuickShow Team 🚀</strong>
+                </p>
+
+                <hr style="border:none; border-top:1px solid #eee; margin:20px 0;" />
+
+                <p style="font-size:12px; color:#888; text-align:center;">
+                    This is an automated email. Please do not reply.
+                </p>
+
+                </div>`
+                
+            })
         }
     )
 
 // Create an empty array where we'll export future Inngest functions
-export const functions = [syncUserCreation, syncUserDeletion, syncUserUpdation, releaseSeatsAndDeleteBooking];
+export const functions = [syncUserCreation, syncUserDeletion, syncUserUpdation, releaseSeatsAndDeleteBooking, sendBookingConfirmationEmail];
