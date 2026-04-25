@@ -144,7 +144,7 @@ const AddShows = () => {
                 )}
                 <p className='font-medium truncate'>{movie.title}</p>
                 <p className='text-gray-400 text-sm'>{movie.release_date}</p>
-          </div>
+              </div>
             ))}
           </div>
         </div>
