@@ -1,6 +1,7 @@
 import axios from 'axios';
 import Movie from '../models/Movie.js';
 import Show from '../models/Show.js';
+import { inngest } from '../inngest/index.js';
 
 const RETRYABLE_NETWORK_CODES = new Set(['ECONNRESET', 'ECONNABORTED', 'ETIMEDOUT', 'ENOTFOUND', 'EAI_AGAIN']);
 
@@ -27,6 +28,10 @@ const fetchTmdbWithRetry = async (url, config, retries = 2) => {
 
 export const getNowPlayingMovies = async (req, res) => {
     try {
+        if (!process.env.TMDB_API_KEY) {
+            return res.json({ success: true, movies: [] });
+        }
+
         const { data } =  await axios.get('https://api.themoviedb.org/3/movie/now_playing', {
             headers: {
                 Authorization: `Bearer ${process.env.TMDB_API_KEY}`,
@@ -37,7 +42,7 @@ export const getNowPlayingMovies = async (req, res) => {
         res.json({success: true, movies: movies})
     } catch (error) {
         console.log(error);
-        res.status(500).json({success: false, message: error.message})
+        res.json({ success: true, movies: [] })
     }
 }
 
@@ -119,6 +124,14 @@ export const addShow = async (req, res) => {
         if(showsToCreate.length > 0){
             await Show.insertMany(showsToCreate);
         }
+
+        //trigger inngest event
+        await inngest.send({
+            name: "app/shows.added",
+            data: {
+                movieTitle: movie.title,
+            }
+        })
 
         res.json({success: true, message: 'Show added successfully'})
 
