@@ -1,22 +1,22 @@
-# QuickShow
+# QuickShow 🎬
 
 QuickShow is a full-stack movie ticket booking application built with a Vite + React frontend and an Express + MongoDB backend. It lets users browse movies, view show details, pick seats, book tickets, manage favorites, and pay through Stripe. The admin side supports adding shows from TMDB now-playing data and managing bookings and dashboard metrics.
 
-## Key Features
+## Key Features ✨
 
 - Browse upcoming movies and show listings
 - View movie details and available show timings
 - Select seats and create bookings
-- Stripe checkout integration for payments
+- Stripe checkout integration for payments 💳
 - User bookings page and favorites management
 - Admin dashboard for shows and bookings
 - Add shows from TMDB now-playing movies
 - Clerk-based authentication and admin access control
-- Booking confirmation emails via Nodemailer
+- Booking confirmation emails via Nodemailer 📧
 - Inngest workflows for user sync, reminders, and notifications
 - Responsive UI built with React and Tailwind CSS
 
-## Tech Stack
+## Tech Stack 🛠️
 
 ### Frontend
 - React 18
@@ -42,7 +42,7 @@ QuickShow is a full-stack movie ticket booking application built with a Vite + R
 - CORS
 - dotenv
 
-## Installation
+## Installation 🚀
 
 ### Prerequisites
 - Node.js
@@ -74,7 +74,7 @@ npm install
 ### 4. Configure environment variables
 Create the `.env` files shown below in the `server/` and `client/` folders.
 
-## Environment Variables
+## Environment Variables 🔐
 
 ### `server/.env`
 ```dotenv
@@ -105,7 +105,7 @@ VITE_BASE_URL=http://localhost:3000
 VITE_TMDB_IMAGE_BASE_URL=https://image.tmdb.org/t/p/original
 ```
 
-## How to Run
+## How to Run ▶️
 
 ### Development
 Start the backend:
@@ -139,7 +139,7 @@ cd server
 npm start
 ```
 
-## Folder Structure
+## Folder Structure 📁
 
 ```bash
 QuickShow/
@@ -183,7 +183,7 @@ QuickShow/
 - `server/configs`: database and email setup
 - `server/inngest`: background jobs and event-driven workflows
 
-## API Endpoints Summary
+## API Endpoints Summary 🌐
 
 ### Public and user routes
 - `GET /api/show/all` - Get all upcoming shows
@@ -206,7 +206,7 @@ QuickShow/
 - `POST /api/stripe` - Stripe webhook handler
 - `GET /api/inngest` - Inngest event/function endpoint
 
-## Screenshots
+## Screenshots 🖼️
 
 Add screenshots to a `docs/screenshots/` folder and reference them here.
 
@@ -217,7 +217,7 @@ Add screenshots to a `docs/screenshots/` folder and reference them here.
 ![Admin Dashboard](docs/screenshots/admin-dashboard.png)
 ```
 
-## Future Improvements
+## Future Improvements 💡
 
 - Add automated tests for controllers and UI flows
 - Add stronger validation and centralized API error handling
@@ -227,7 +227,7 @@ Add screenshots to a `docs/screenshots/` folder and reference them here.
 - Improve logging and production monitoring
 - Add CI checks for linting and builds
 
-## Notes
+## Notes 📝
 
 - The frontend uses `VITE_BASE_URL` to reach the backend API.
 - Admin show creation depends on Clerk admin access and TMDB data.
